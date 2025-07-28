@@ -15,6 +15,7 @@ import Login from './components/Login/Login'
 import NotFound from './components/NotFound/NotFound'
 import Products from './components/Products/Products'
 import Wishlist from './components/Wishlist/Wishlist'
+import UserContextProvider from './Context/userContext'
 
 
 
@@ -41,7 +42,9 @@ const routers = createBrowserRouter([
 
 function App() {
   return <>
-    <RouterProvider router={routers}></RouterProvider>
+    <UserContextProvider>
+      <RouterProvider router={routers}></RouterProvider>
+    </UserContextProvider>
   </>
 
 }
