@@ -16,6 +16,9 @@ import NotFound from './components/NotFound/NotFound'
 import Products from './components/Products/Products'
 import Wishlist from './components/Wishlist/Wishlist'
 import UserContextProvider from './Context/userContext'
+import ForgetPass from './components/ForgetPass/ForgetPass'
+import VerfiyCode from './components/Verfiycode/VerfiyCode'
+import ResetPassword from './components/ResetPassword/ResetPassword'
 
 
 
@@ -34,6 +37,9 @@ const routers = createBrowserRouter([
       { path: 'login', element: <Login /> },
       { path: 'Products', element: <Products /> },
       { path: 'wishlist', element: <Wishlist /> },
+      { path: 'forgetpass', element: <ForgetPass /> },
+      { path: 'verfiycode', element: <VerfiyCode /> },
+      { path: 'resetpassword', element: <ResetPassword /> },
       { path: '*', element: <NotFound /> },
     ]
   }

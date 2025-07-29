@@ -1,52 +1,59 @@
-import React, { useContext, useState } from 'react'
-import style from './Register.module.css'
+import React, { useState } from 'react'
 import { useFormik } from 'formik'
 import { Link, useNavigate } from 'react-router-dom'
 import axios from 'axios'
-import { userContext } from '../../Context/userContext'
+import Loading from '../Loading/Loading'
 
-export default function Register() {
-    const [isLoading, setIsLoading] = useState(false);
-    const [errorMessage, setErrorMessage] = useState('');
-    const [successMessage, setSuccessMessage] = useState('');
+export default function ResetPassword() {
+    const [isLoading, setIsLoading] = useState(false)
+    const [errorMessage, setErrorMessage] = useState('')
+    const [successMessage, setSuccessMessage] = useState('')
+    const navigate = useNavigate()
 
-    let navigate = useNavigate();
-    let { setUserToken } = useContext(userContext);
-
-    async function signUp(values) {
+    async function handleResetPassword(values) {
         try {
-            setIsLoading(true);
-            setErrorMessage('');
-            setSuccessMessage('');
+            setIsLoading(true)
+            setErrorMessage('')
+            setSuccessMessage('')
 
-            if (values.password !== values.rePassword) {
-                throw new Error("Passwords don't match");
-            }
+            const { data } = await axios.put(
+                'https://ecommerce.routemisr.com/api/v1/auth/resetPassword',
+                values
+            )
 
-            let { data } = await axios.post(`https://ecommerce.routemisr.com/api/v1/auth/signup`, values);
-
-            setSuccessMessage('Registration successful! Redirecting to login...');
+            setSuccessMessage('Password reset successfully! Redirecting to login...')
             setTimeout(() => {
-                navigate('/login');
-            }, 2000);
+                navigate('/login')
+            }, 1500)
 
         } catch (error) {
-            console.log(error.response?.data?.message || error.message);
-            setErrorMessage(error.response?.data?.message || error.message);
+            console.log(error.response?.data?.message || error.message)
+            setErrorMessage(error.response?.data?.message || 'Failed to reset password. Please try again.')
         } finally {
-            setIsLoading(false);
+            setIsLoading(false)
         }
     }
 
     const formik = useFormik({
         initialValues: {
-            name: "",
             email: "",
-            password: "",
-            rePassword: "",
-            phone: "",
+            newPassword: "",
         },
-        onSubmit: signUp
+        onSubmit: handleResetPassword,
+        validate: values => {
+            const errors = {}
+            if (!values.email) {
+                errors.email = 'Email is required'
+            } else if (!/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i.test(values.email)) {
+                errors.email = 'Invalid email address'
+            }
+            if (!values.newPassword) {
+                errors.newPassword = 'Password is required'
+            } else if (values.newPassword.length < 6) {
+                errors.newPassword = 'Password must be at least 6 characters'
+            }
+            return errors
+        }
     })
 
     return (
@@ -64,13 +71,10 @@ export default function Register() {
             <div className="w-full md:w-1/2 flex flex-col justify-center py-12 px-4 sm:px-6 lg:px-8">
                 <div className="sm:mx-auto sm:w-full sm:max-w-md">
                     <h2 className="text-center text-3xl font-extrabold text-gray-900">
-                        Create an account
+                        Reset Your Password
                     </h2>
                     <p className="mt-2 text-center text-sm text-gray-600">
-                        Already have an account?{' '}
-                        <Link to="/login" className="font-medium text-[#DB4444] hover:text-[#b53737]">
-                            Sign in
-                        </Link>
+                        Enter your email and new password
                     </p>
                 </div>
 
@@ -108,25 +112,6 @@ export default function Register() {
 
                         <form className="space-y-6" onSubmit={formik.handleSubmit}>
                             <div>
-                                <label htmlFor="name" className="block text-sm font-medium text-gray-700">
-                                    Full Name
-                                </label>
-                                <div className="mt-1">
-                                    <input
-                                        id="name"
-                                        name="name"
-                                        type="text"
-                                        autoComplete="name"
-                                        required
-                                        value={formik.values.name}
-                                        onChange={formik.handleChange}
-                                        onBlur={formik.handleBlur}
-                                        className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-[#DB4444] focus:border-[#DB4444] sm:text-sm"
-                                    />
-                                </div>
-                            </div>
-
-                            <div>
                                 <label htmlFor="email" className="block text-sm font-medium text-gray-700">
                                     Email address
                                 </label>
@@ -140,66 +125,34 @@ export default function Register() {
                                         value={formik.values.email}
                                         onChange={formik.handleChange}
                                         onBlur={formik.handleBlur}
-                                        className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-[#DB4444] focus:border-[#DB4444] sm:text-sm"
+                                        className={`appearance-none block w-full px-3 py-2 border ${formik.errors.email ? 'border-red-300' : 'border-gray-300'} rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-[#DB4444] focus:border-[#DB4444] sm:text-sm`}
                                     />
                                 </div>
+                                {formik.errors.email && (
+                                    <p className="mt-2 text-sm text-red-600">{formik.errors.email}</p>
+                                )}
                             </div>
 
                             <div>
-                                <label htmlFor="password" className="block text-sm font-medium text-gray-700">
-                                    Password
+                                <label htmlFor="newPassword" className="block text-sm font-medium text-gray-700">
+                                    New Password
                                 </label>
                                 <div className="mt-1">
                                     <input
-                                        id="password"
-                                        name="password"
+                                        id="newPassword"
+                                        name="newPassword"
                                         type="password"
                                         autoComplete="new-password"
                                         required
-                                        value={formik.values.password}
+                                        value={formik.values.newPassword}
                                         onChange={formik.handleChange}
                                         onBlur={formik.handleBlur}
-                                        className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-[#DB4444] focus:border-[#DB4444] sm:text-sm"
+                                        className={`appearance-none block w-full px-3 py-2 border ${formik.errors.newPassword ? 'border-red-300' : 'border-gray-300'} rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-[#DB4444] focus:border-[#DB4444] sm:text-sm`}
                                     />
                                 </div>
-                            </div>
-
-                            <div>
-                                <label htmlFor="rePassword" className="block text-sm font-medium text-gray-700">
-                                    Confirm Password
-                                </label>
-                                <div className="mt-1">
-                                    <input
-                                        id="rePassword"
-                                        name="rePassword"
-                                        type="password"
-                                        autoComplete="new-password"
-                                        required
-                                        value={formik.values.rePassword}
-                                        onChange={formik.handleChange}
-                                        onBlur={formik.handleBlur}
-                                        className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-[#DB4444] focus:border-[#DB4444] sm:text-sm"
-                                    />
-                                </div>
-                            </div>
-
-                            <div>
-                                <label htmlFor="phone" className="block text-sm font-medium text-gray-700">
-                                    Phone Number
-                                </label>
-                                <div className="mt-1">
-                                    <input
-                                        id="phone"
-                                        name="phone"
-                                        type="tel"
-                                        autoComplete="tel"
-                                        required
-                                        value={formik.values.phone}
-                                        onChange={formik.handleChange}
-                                        onBlur={formik.handleBlur}
-                                        className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-[#DB4444] focus:border-[#DB4444] sm:text-sm"
-                                    />
-                                </div>
+                                {formik.errors.newPassword && (
+                                    <p className="mt-2 text-sm text-red-600">{formik.errors.newPassword}</p>
+                                )}
                             </div>
 
                             <div>
@@ -214,10 +167,10 @@ export default function Register() {
                                                 <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                                                 <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                                             </svg>
-                                            Creating account...
+                                            Resetting...
                                         </div>
                                     ) : (
-                                        'Create Account'
+                                        'Reset Password'
                                     )}
                                 </button>
                             </div>

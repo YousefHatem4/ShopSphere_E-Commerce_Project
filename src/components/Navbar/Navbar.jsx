@@ -22,7 +22,7 @@ export default function Navbar() {
         </div>
 
 
-        <nav className="bg-white fixed w-full z-20 top-0 start-0 border-b border-gray-200 mt-18 md:mt-12 shadow-sm">
+        <nav className="bg-white sticky w-full z-30 top-0 start-0 border-b border-gray-200  shadow-sm">
             <div className="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
                 <Link to={''} className="flex items-center space-x-3 rtl:space-x-reverse">
                     <span className="self-center text-2xl font-bold whitespace-nowrap text-gray-900 hover:text-[#DB4444] transition-colors duration-300">ShopSphere</span>
@@ -32,13 +32,11 @@ export default function Navbar() {
                 <div className="flex items-center md:order-2 space-x-3 md:space-x-0 rtl:space-x-reverse">
                     <Link to={'wishlist'}><i className={`${currentPath === '/wishlist' ? 'fa-solid fa-heart text-[#DB4444]' : 'fa-regular fa-heart'} text-[#000000] text-2xl hover:text-[#DB4444] cursor-pointer transition-colors duration-300`}></i></Link>
                     <Link to={'cart'}><i className={`${currentPath === '/cart' ? 'fa-solid fa-cart-shopping text-[#DB4444]' : 'fa-solid fa-cart-shopping'} relative md:ms-2 text-[#000000] text-2xl hover:text-[#DB4444] cursor-pointer transition-colors duration-300`}></i>
-                        <span className='absolute top-1.5 right-34 bg-[#DB4444] text-white font-medium text-sm px-1.5 rounded-full'>
+                        <span className='absolute right-15  top-3 md:top-2 md:right-32 bg-[#DB4444] text-white font-medium text-sm px-1.5 rounded-full'>
                             2
                         </span>
                     </Link>
-                    {userToken && <> <span onClick={logOut} className="cursor-pointer md:ms-7 font-bold text-gray-900 hover:text-[#DB4444] text-sm">
-                        Logout
-                    </span></>}
+
                     <button onClick={() => setMenuOpen(!menuOpen)} data-collapse-toggle="navbar-sticky" type="button" className="inline-flex items-center p-2 w-10 h-10 justify-center text-sm text-gray-500 rounded-lg md:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 transition-colors duration-200">
                         <span className="sr-only">Open main menu</span>
                         {menuOpen ? <><svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -93,6 +91,9 @@ export default function Navbar() {
                                 Sign in
                                 <span className="absolute bottom-0 left-1/2 transform -translate-x-1/2  w-0 h-0.5 bg-[#DB4444] transition-all duration-600 md:duration-300 group-hover:w-full"></span>
                             </Link></>}
+                            {userToken && <> <span onClick={logOut} className="cursor-pointer  font-bold text-gray-900 hover:text-[#DB4444] text-sm">
+                                Logout
+                            </span></>}
                         </li>
                     </ul>
                 </div>

@@ -6,7 +6,7 @@ import Footer from '../Footer/Footer'
 
 export default function Layout() {
     return <>
-        <div className='mb-17'>
+        <div >
             <Navbar />
         </div>
         <Outlet></Outlet>
