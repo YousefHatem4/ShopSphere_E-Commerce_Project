@@ -11,7 +11,7 @@ export default function Loading() {
 
 
     return <>
-        <div className="sweet-loading py-10 ">
+        <div className="sweet-loading py-60 ">
 
             <CircleLoader
 

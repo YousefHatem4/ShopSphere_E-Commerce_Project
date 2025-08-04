@@ -22,10 +22,10 @@ export default function HomeSlider() {
     return (
         <div>
             <Slider {...settings}>
-                <div><img src={slide1} className='w-full h-[320px] object-cover' alt="slide1" /></div>
-                <div><img src={slide2} className='w-full h-[320px]  object-cover' alt="slide2" /></div>
-                <div><img src={slide3} className='w-full h-[320px]  object-cover' alt="slide3" /></div>
-                <div><img src={slide4} className='w-full h-[320px]  object-cover' alt="slide4" /></div>
+                <div><img src={slide1} className='w-full h-[320px] object-contain md:object-cover ' alt="slide1" /></div>
+                <div><img src={slide2} className='w-full h-[320px]  object-contain  md:object-cover' alt="slide2" /></div>
+                <div><img src={slide3} className='w-full h-[320px]  object-contain  md:object-cover' alt="slide3" /></div>
+                <div><img src={slide4} className='w-full h-[320px]   object-contain md:object-cover' alt="slide4" /></div>
             </Slider>
         </div>
     );
