@@ -2,11 +2,13 @@ import React, { useContext, useState } from 'react'
 import style from './Navbar.module.css'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { userContext } from '../../Context/userContext';
+import { cartContext } from '../../Context/CartContext';
 
 export default function Navbar() {
     const location = useLocation();
     const currentPath = location.pathname;
     const [menuOpen, setMenuOpen] = useState(false);
+    let { cart } = useContext(cartContext);
     let { userToken, setUserToken } = useContext(userContext);
     let navigate = useNavigate();
 
@@ -30,12 +32,16 @@ export default function Navbar() {
 
 
                 <div className="flex items-center md:order-2 space-x-3 md:space-x-0 rtl:space-x-reverse">
-                    <Link to={'wishlist'}><i className={`${currentPath === '/wishlist' ? 'fa-solid fa-heart text-[#DB4444]' : 'fa-regular fa-heart'} text-[#000000] text-2xl hover:text-[#DB4444] cursor-pointer transition-colors duration-300`}></i></Link>
-                    <Link to={'cart'}><i className={`${currentPath === '/cart' ? 'fa-solid fa-cart-shopping text-[#DB4444]' : 'fa-solid fa-cart-shopping'} relative md:ms-2 text-[#000000] text-2xl hover:text-[#DB4444] cursor-pointer transition-colors duration-300`}></i>
-                        <span className='absolute right-15  top-3 md:top-2 md:right-32 bg-[#DB4444] text-white font-medium text-sm px-1.5 rounded-full'>
-                            2
-                        </span>
-                    </Link>
+                    {userToken && <>
+                        <Link to={'wishlist'}><i className={`${currentPath === '/wishlist' ? 'fa-solid fa-heart text-[#DB4444]' : 'fa-regular fa-heart'} text-[#000000] text-2xl hover:text-[#DB4444] cursor-pointer transition-colors duration-300`}></i></Link>
+                        <Link to={'cart'}><i className={`${currentPath === '/cart' ? 'fa-solid fa-cart-shopping text-[#DB4444]' : 'fa-solid fa-cart-shopping'} relative md:ms-2 text-[#000000] text-2xl hover:text-[#DB4444] cursor-pointer transition-colors duration-300`}></i>
+                            {cart?.numOfCartItems > 0 && <>
+                                <span className='absolute right-15  top-3 md:top-2 md:right-32 bg-[#DB4444] text-white font-medium text-sm px-1.5 rounded-full'>
+                                    {cart.numOfCartItems}
+                                </span>
+                            </>}
+                        </Link>
+                    </>}
 
                     <button onClick={() => setMenuOpen(!menuOpen)} data-collapse-toggle="navbar-sticky" type="button" className="inline-flex items-center p-2 w-10 h-10 justify-center text-sm text-gray-500 rounded-lg md:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 transition-colors duration-200">
                         <span className="sr-only">Open main menu</span>

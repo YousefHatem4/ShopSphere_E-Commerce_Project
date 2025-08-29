@@ -1,14 +1,31 @@
-import React, { useContext } from 'react';
+import React, { useContext, useState } from 'react';
 import style from './Home.module.css';
 import HomeCategory from '../HomeCategory/HomeCategory';
 import HomeSlider from '../HomeSlider/HomeSlider';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { productContext } from '../../Context/ProductsContext';
 import Loading from '../Loading/Loading';
+import { cartContext } from '../../Context/CartContext';
+import toast from 'react-hot-toast';
 
 export default function Home() {
 
     let { products, loading } = useContext(productContext);
+    let { getProductToCart, cart } = useContext(cartContext);
+    const navigate = useNavigate();
+    const [addedItems, setAddedItems] = useState([]);
+
+    const handleAddToCart = (productId) => {
+        let token = localStorage.getItem('userToken');
+
+        if (!token) {
+            toast.error("You must sign in first to add to cart");
+            navigate("/login");
+            return;
+        }
+        getProductToCart(productId);
+        setAddedItems((prev) => [...prev, productId]); // mark as added
+    }
 
     return (
         <>
@@ -76,9 +93,12 @@ export default function Home() {
                                         {/* Action Buttons */}
                                         <div className="mt-3 sm:mt-5 flex justify-between items-center gap-2 sm:gap-3">
                                             <button
-                                                className="cursor-pointer flex-1 bg-[#DB4444] text-white py-1 sm:py-2 rounded-lg lg:rounded-xl hover:bg-[#B83636] transition-all duration-300 text-xs sm:text-sm font-medium"
+                                                onClick={() => handleAddToCart(product._id)}
+                                                disabled={addedItems.includes(product._id)} // disable if added
+                                                className={`cursor-pointer flex-1 py-1 sm:py-2 rounded-lg lg:rounded-xl transition-all duration-300 text-xs sm:text-sm font-medium 
+                                                    ${addedItems.includes(product._id) ? "bg-gray-400 text-white cursor-not-allowed" : "bg-[#DB4444] text-white hover:bg-[#B83636]"}`}
                                             >
-                                                Add to Cart
+                                                {addedItems.includes(product._id) ? "Added" : "Add to Cart"}
                                             </button>
 
                                             <button

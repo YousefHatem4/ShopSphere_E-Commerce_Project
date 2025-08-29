@@ -21,6 +21,9 @@ import VerfiyCode from './components/Verfiycode/VerfiyCode'
 import ResetPassword from './components/ResetPassword/ResetPassword'
 import ProductsContextProvider from './Context/ProductsContext'
 import ProductDetails from './components/ProductDetails/ProductDetails'
+import CartContextProvider from './Context/CartContext'
+import Checkout from './components/CheckOut/Checkout'
+
 
 
 
@@ -42,6 +45,7 @@ const routers = createBrowserRouter([
       { path: 'forgetpass', element: <ForgetPass /> },
       { path: 'verfiycode', element: <VerfiyCode /> },
       { path: 'resetpassword', element: <ResetPassword /> },
+      { path: 'checkout', element: <Checkout /> },
       { path: 'productdetails/:id', element: <ProductDetails /> },
       { path: '*', element: <NotFound /> },
     ]
@@ -51,11 +55,13 @@ const routers = createBrowserRouter([
 
 function App() {
   return <>
-    <ProductsContextProvider>
-      <UserContextProvider>
-        <RouterProvider router={routers}></RouterProvider>
-      </UserContextProvider>
-    </ProductsContextProvider>
+    <CartContextProvider>
+      <ProductsContextProvider>
+        <UserContextProvider>
+          <RouterProvider router={routers}></RouterProvider>
+        </UserContextProvider>
+      </ProductsContextProvider>
+    </CartContextProvider>
   </>
 
 }

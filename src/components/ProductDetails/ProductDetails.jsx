@@ -1,10 +1,12 @@
 import axios from 'axios';
-import React, { useEffect, useRef, useState } from 'react'
-import { useParams } from 'react-router-dom'
+import React, { useContext, useEffect, useRef, useState } from 'react'
+import { useNavigate, useParams } from 'react-router-dom'
 import Loading from '../Loading/Loading';
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import Slider from "react-slick";
+import { cartContext } from '../../Context/CartContext';
+import toast from 'react-hot-toast';
 
 export default function ProductDetails() {
     let { id } = useParams();
@@ -13,6 +15,21 @@ export default function ProductDetails() {
     const [relatedProducts, setRelatedProducts] = useState([]);
     const [mainImage, setMainImage] = useState('');
     const sliderRef = useRef(null);
+    let { getProductToCart, cart } = useContext(cartContext);
+    const navigate = useNavigate();
+    const [addedItems, setAddedItems] = useState([]);
+
+    const handleAddToCart = (productId) => {
+        let token = localStorage.getItem('userToken');
+
+        if (!token) {
+            toast.error("You must sign in first to add to cart");
+            navigate("/login");
+            return;
+        }
+        getProductToCart(productId);
+        setAddedItems((prev) => [...prev, productId]); // mark as added
+    }
 
     async function getProductDetails(productId) {
         try {
@@ -111,9 +128,12 @@ export default function ProductDetails() {
                         {/* Action Buttons */}
                         <div className='mt-6 md:mt-10 flex flex-col sm:flex-row items-center justify-center gap-3 md:gap-6'>
                             <button
-                                className="cursor-pointer bg-[#DB4444] text-white py-2 md:py-3 px-6 md:px-10 rounded-sm hover:bg-[#B83636] transition-all duration-300 text-xs sm:text-sm font-medium w-full sm:w-auto text-center"
+                                onClick={() => handleAddToCart(product._id)}
+                                disabled={addedItems.includes(product._id)} // disable if added
+                                className={`cursor-pointer flex-1 py-1 sm:py-2 rounded-lg lg:rounded-xl transition-all duration-300 text-xs sm:text-sm font-medium 
+                                                    ${addedItems.includes(product._id) ? "bg-gray-400 text-white cursor-not-allowed" : "bg-[#DB4444] text-white hover:bg-[#B83636]"}`}
                             >
-                                Add to Cart
+                                {addedItems.includes(product._id) ? "Added" : "Add to Cart"}
                             </button>
 
                             <button
