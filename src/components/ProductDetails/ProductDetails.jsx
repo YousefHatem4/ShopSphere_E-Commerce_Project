@@ -57,7 +57,9 @@ export default function ProductDetails() {
 
     useEffect(() => {
         getProductDetails(id);
+        window.scrollTo({ top: 0, behavior: "smooth" }); // 👈 scroll to top on load
     }, [id]);
+
 
     useEffect(() => {
         document.title = 'Product Details';
