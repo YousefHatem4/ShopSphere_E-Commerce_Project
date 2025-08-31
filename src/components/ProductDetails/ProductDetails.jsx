@@ -7,6 +7,7 @@ import "slick-carousel/slick/slick-theme.css";
 import Slider from "react-slick";
 import { cartContext } from '../../Context/CartContext';
 import toast from 'react-hot-toast';
+import { WishContext } from '../../Context/WishListContext';
 
 export default function ProductDetails() {
     let { id } = useParams();
@@ -18,6 +19,8 @@ export default function ProductDetails() {
     let { getProductToCart, cart } = useContext(cartContext);
     const navigate = useNavigate();
     const [addedItems, setAddedItems] = useState([]);
+    let { getProductToWishList, WishProduct, deleteWishList } = useContext(WishContext);
+
 
     const handleAddToCart = (productId) => {
         let token = localStorage.getItem('userToken');
@@ -139,10 +142,20 @@ export default function ProductDetails() {
                             </button>
 
                             <button
-                                className="cursor-pointer p-1 sm:p-2 rounded-full border border-gray-300 text-gray-500 hover:text-red-500 hover:border-red-400 transition-colors duration-300 w-10 h-10 flex items-center justify-center"
+                                onClick={() =>
+                                    WishProduct.some(p => p._id === product._id)
+                                        ? deleteWishList(product._id)
+                                        : getProductToWishList(product._id)
+                                }
+                                className={`cursor-pointer p-1 sm:p-2 rounded-full border transition-colors duration-300 
+             ${WishProduct.some(p => p._id === product._id)
+                                        ? "bg-red-100 border-red-400 text-red-500"
+                                        : "border-gray-300 text-gray-500 hover:text-red-500 hover:border-red-400"
+                                    }`}
                             >
                                 <i className="fa-solid fa-heart text-sm sm:text-lg"></i>
                             </button>
+
                         </div>
 
                         {/* Delivery Info */}

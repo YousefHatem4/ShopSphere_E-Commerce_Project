@@ -1,8 +1,123 @@
-import React from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import style from './Products.module.css'
+import { productContext } from '../../Context/ProductsContext';
+import { cartContext } from '../../Context/CartContext';
+import { WishContext } from '../../Context/WishListContext';
+import { Link, useNavigate } from 'react-router-dom';
+import toast from 'react-hot-toast';
+import Loading from '../Loading/Loading';
 
 export default function Products() {
+    let { products, loading } = useContext(productContext);
+    let { getProductToCart, cart } = useContext(cartContext);
+    let { getProductToWishList, WishProduct, deleteWishList } = useContext(WishContext);
+    const navigate = useNavigate();
+    const [addedItems, setAddedItems] = useState([]);
+
+    const handleAddToCart = (productId) => {
+        let token = localStorage.getItem('userToken');
+
+        if (!token) {
+            toast.error("You must sign in first to add to cart");
+            navigate("/login");
+            return;
+        }
+        getProductToCart(productId);
+        setAddedItems((prev) => [...prev, productId]); // mark as added
+    }
+
+    useEffect(() => {
+        document.title = 'Products';
+        window.scrollTo(0, 0);
+    }, []);
+
     return <>
-        <h2>Products</h2>
+        {/* Products section */}
+        <section className='my-10 px-4 sm:px-6 lg:px-30'>
+            {/* title */}
+            <div className='px-2 mb-10 sm:px-0'>
+                <div className='flex items-center gap-5'>
+                    <div className='bg-[#DB4444] w-[20px] h-[40px] rounded-sm'></div>
+                    <h1 className='text-[#DB4444] font-bold text-sm sm:text-base'>Our Products</h1>
+                </div>
+            </div>
+
+            {/* Products */}
+            {loading ? (
+                <Loading />
+            ) : (
+                <>
+                    <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-5 lg:gap-6">
+                        {products?.map((product) => (
+                            <div key={product._id} className=''>
+                                {/* card */}
+                                <div className='cursor-pointer product bg-white p-3 sm:p-4 rounded-xl lg:rounded-2xl shadow-sm hover:shadow-lg transition-all duration-300 flex flex-col justify-between h-full border border-gray-100 hover:-translate-y-1'>
+                                    {/* Product Image */}
+                                    <Link to={`/productdetails/${product._id}`}>
+                                        <div className="overflow-hidden rounded-lg lg:rounded-xl">
+                                            <img
+                                                src={product.imageCover}
+                                                alt={product.title}
+                                                className="w-full  h-40 sm:h-48 lg:h-52 object-cover hover:scale-105 transition-transform duration-500"
+                                            />
+                                        </div>
+
+                                        {/* Product Info */}
+                                        <div className="mt-3 sm:mt-4 space-y-1">
+                                            <span className="inline-block text-xs font-medium text-gray-400 uppercase tracking-widest">
+                                                {product.category.name}
+                                            </span>
+                                            <h3 className="text-sm sm:text-base font-semibold text-gray-800 leading-snug line-clamp-2">
+                                                {product.title.split(' ', 2).join(' ')}
+                                            </h3>
+
+                                            <div className="flex justify-between items-center mt-2">
+                                                <span className="text-green-600 font-bold text-xs sm:text-sm">{product.price} EGP</span>
+                                                <div className="flex items-center text-yellow-500 text-xs sm:text-sm">
+                                                    <i className="fas fa-star mr-1"></i>
+                                                    {product.ratingsAverage}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </Link>
+
+                                    {/* Action Buttons */}
+                                    <div className="mt-3 sm:mt-5 flex justify-between items-center gap-2 sm:gap-3">
+                                        <button
+                                            onClick={() => handleAddToCart(product._id)}
+                                            disabled={addedItems.includes(product._id)} // disable if added
+                                            className={`cursor-pointer flex-1 py-1 sm:py-2 rounded-lg lg:rounded-xl transition-all duration-300 text-xs sm:text-sm font-medium 
+                                                    ${addedItems.includes(product._id) ? "bg-gray-400 text-white cursor-not-allowed" : "bg-[#DB4444] text-white hover:bg-[#B83636]"}`}
+                                        >
+                                            {addedItems.includes(product._id) ? "Added" : "Add to Cart"}
+                                        </button>
+
+                                        <button
+                                            onClick={() =>
+                                                WishProduct.some(p => p._id === product._id)
+                                                    ? deleteWishList(product._id)
+                                                    : getProductToWishList(product._id)
+                                            }
+                                            className={`cursor-pointer p-1 sm:p-2 rounded-full border transition-colors duration-300 
+             ${WishProduct.some(p => p._id === product._id)
+                                                    ? "bg-red-100 border-red-400 text-red-500"
+                                                    : "border-gray-300 text-gray-500 hover:text-red-500 hover:border-red-400"
+                                                }`}
+                                        >
+                                            <i className="fa-solid fa-heart text-sm sm:text-lg"></i>
+                                        </button>
+
+
+
+                                    </div>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+
+                   
+                </>
+            )}
+        </section>
     </>
 }

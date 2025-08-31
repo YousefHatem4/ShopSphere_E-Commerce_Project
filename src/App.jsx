@@ -23,6 +23,7 @@ import ProductsContextProvider from './Context/ProductsContext'
 import ProductDetails from './components/ProductDetails/ProductDetails'
 import CartContextProvider from './Context/CartContext'
 import Checkout from './components/CheckOut/Checkout'
+import WishListContextProvider from './Context/WishListContext'
 
 
 
@@ -55,13 +56,15 @@ const routers = createBrowserRouter([
 
 function App() {
   return <>
-    <CartContextProvider>
-      <ProductsContextProvider>
-        <UserContextProvider>
-          <RouterProvider router={routers}></RouterProvider>
-        </UserContextProvider>
-      </ProductsContextProvider>
-    </CartContextProvider>
+    <WishListContextProvider>
+      <CartContextProvider>
+        <ProductsContextProvider>
+          <UserContextProvider>
+            <RouterProvider router={routers}></RouterProvider>
+          </UserContextProvider>
+        </ProductsContextProvider>
+      </CartContextProvider>
+    </WishListContextProvider>
   </>
 
 }

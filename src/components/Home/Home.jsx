@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import style from './Home.module.css';
 import HomeCategory from '../HomeCategory/HomeCategory';
 import HomeSlider from '../HomeSlider/HomeSlider';
@@ -7,11 +7,13 @@ import { productContext } from '../../Context/ProductsContext';
 import Loading from '../Loading/Loading';
 import { cartContext } from '../../Context/CartContext';
 import toast from 'react-hot-toast';
+import { WishContext } from '../../Context/WishListContext';
 
 export default function Home() {
 
     let { products, loading } = useContext(productContext);
     let { getProductToCart, cart } = useContext(cartContext);
+    let { getProductToWishList, WishProduct, deleteWishList } = useContext(WishContext);
     const navigate = useNavigate();
     const [addedItems, setAddedItems] = useState([]);
 
@@ -26,6 +28,11 @@ export default function Home() {
         getProductToCart(productId);
         setAddedItems((prev) => [...prev, productId]); // mark as added
     }
+
+    useEffect(() => {
+        document.title = 'Home';
+    }, []);
+
 
     return (
         <>
@@ -102,10 +109,22 @@ export default function Home() {
                                             </button>
 
                                             <button
-                                                className="cursor-pointer p-1 sm:p-2 rounded-full border border-gray-300 text-gray-500 hover:text-red-500 hover:border-red-400 transition-colors duration-300"
+                                                onClick={() =>
+                                                    WishProduct.some(p => p._id === product._id)
+                                                        ? deleteWishList(product._id)
+                                                        : getProductToWishList(product._id)
+                                                }
+                                                className={`cursor-pointer p-1 sm:p-2 rounded-full border transition-colors duration-300 
+             ${WishProduct.some(p => p._id === product._id)
+                                                        ? "bg-red-100 border-red-400 text-red-500"
+                                                        : "border-gray-300 text-gray-500 hover:text-red-500 hover:border-red-400"
+                                                    }`}
                                             >
                                                 <i className="fa-solid fa-heart text-sm sm:text-lg"></i>
                                             </button>
+
+
+
                                         </div>
                                     </div>
                                 </div>
