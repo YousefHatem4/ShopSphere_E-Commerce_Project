@@ -33,7 +33,6 @@ export default function Category() {
                         <div className='bg-[#DB4444] w-[20px] h-[40px] rounded-sm'></div>
                         <h1 className='text-[#DB4444] font-bold text-sm sm:text-base'>Our Categories</h1>
                     </div>
-                
                 </div>
 
                 {/* main section */}
