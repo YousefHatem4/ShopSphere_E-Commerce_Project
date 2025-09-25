@@ -24,6 +24,7 @@ import ProductDetails from './components/ProductDetails/ProductDetails'
 import CartContextProvider from './Context/CartContext'
 import Checkout from './components/CheckOut/Checkout'
 import WishListContextProvider from './Context/WishListContext'
+import ProtectedRoute from './components/ProtectedRoute/ProtectedRoute'
 
 
 
@@ -36,17 +37,17 @@ const routers = createBrowserRouter([
       { index: true, element: <Home /> },
       { path: 'register', element: <Register /> },
       { path: 'brands', element: <Brands /> },
-      { path: 'cart', element: <Cart /> },
+      { path: 'cart', element: <ProtectedRoute><Cart /></ProtectedRoute> },
       { path: 'about', element: <About /> },
       { path: 'category', element: <Category /> },
       { path: 'contact', element: <Contact /> },
       { path: 'login', element: <Login /> },
       { path: 'Products', element: <Products /> },
-      { path: 'wishlist', element: <Wishlist /> },
+      { path: 'wishlist', element: <ProtectedRoute><Wishlist /></ProtectedRoute> },
       { path: 'forgetpass', element: <ForgetPass /> },
       { path: 'verfiycode', element: <VerfiyCode /> },
       { path: 'resetpassword', element: <ResetPassword /> },
-      { path: 'checkout', element: <Checkout /> },
+      { path: 'checkout', element: <ProtectedRoute><Checkout /></ProtectedRoute> },
       { path: 'productdetails/:id', element: <ProductDetails /> },
       { path: '*', element: <NotFound /> },
     ]

@@ -9,6 +9,7 @@ import { cartContext } from '../../Context/CartContext';
 import toast from 'react-hot-toast';
 import { WishContext } from '../../Context/WishListContext';
 
+
 export default function ProductDetails() {
     let { id } = useParams();
     const [product, setProduct] = useState([]);
@@ -22,8 +23,10 @@ export default function ProductDetails() {
     let { getProductToWishList, WishProduct, deleteWishList } = useContext(WishContext);
 
 
+
     const handleAddToCart = (productId) => {
         let token = localStorage.getItem('userToken');
+
 
         if (!token) {
             toast.error("You must sign in first to add to cart");
@@ -33,6 +36,25 @@ export default function ProductDetails() {
         getProductToCart(productId);
         setAddedItems((prev) => [...prev, productId]); // mark as added
     }
+
+    // Add this new function for wishlist authentication check
+    const handleWishlistAction = (productId) => {
+        let token = localStorage.getItem('userToken');
+
+        if (!token) {
+            toast.error("You must sign in first to add to wishlist");
+            navigate("/login");
+            return;
+        }
+
+        // If authenticated, proceed with wishlist action
+        if (WishProduct.some(p => p._id === productId)) {
+            deleteWishList(productId);
+        } else {
+            getProductToWishList(productId);
+        }
+    }
+
 
     async function getProductDetails(productId) {
         try {
@@ -47,6 +69,7 @@ export default function ProductDetails() {
         }
     }
 
+
     async function getRelatedProducts(relatedProductId) {
         try {
             let { data } = await axios.get(`https://ecommerce.routemisr.com/api/v1/categories/${relatedProductId}`);
@@ -58,15 +81,18 @@ export default function ProductDetails() {
         }
     }
 
+
     useEffect(() => {
         getProductDetails(id);
         window.scrollTo({ top: 0, behavior: "smooth" }); // 👈 scroll to top on load
     }, [id]);
 
 
+
     useEffect(() => {
         document.title = 'Product Details';
     }, []);
+
 
     const sliderSettings = {
         dots: false,
@@ -79,6 +105,7 @@ export default function ProductDetails() {
         fade: true,
         arrows: false
     };
+
 
     return <>
         {loading ? <Loading /> : <>
@@ -101,6 +128,7 @@ export default function ProductDetails() {
                         ))}
                     </div>
 
+
                     {/* Main Image Slider */}
                     <div className='w-full lg:w-[500px] h-auto lg:h-[600px] order-1 lg:order-2'>
                         <Slider {...sliderSettings} ref={sliderRef}>
@@ -116,6 +144,7 @@ export default function ProductDetails() {
                         </Slider>
                     </div>
 
+
                     {/* Product Info */}
                     <div className='ms-0 lg:ms-7 order-3 w-full lg:w-auto'>
                         <h1 className='text-xl md:text-2xl text-[#000000] font-semibold'>{product.title}</h1>
@@ -130,6 +159,7 @@ export default function ProductDetails() {
                         <p className='text-sm text-[#000000] w-full lg:w-[373px] mt-3 md:mt-5'>{product.description}</p>
                         <div className='bg-[#000000] w-full lg:w-[400px] h-[1px] mt-3 md:mt-5'></div>
 
+
                         {/* Action Buttons */}
                         <div className='mt-6 md:mt-10 flex flex-col sm:flex-row items-center justify-center gap-3 md:gap-6'>
                             <button
@@ -141,12 +171,10 @@ export default function ProductDetails() {
                                 {addedItems.includes(product._id) ? "Added" : "Add to Cart"}
                             </button>
 
+
+                            {/* Updated wishlist button with authentication check - ONLY changed the onClick */}
                             <button
-                                onClick={() =>
-                                    WishProduct.some(p => p._id === product._id)
-                                        ? deleteWishList(product._id)
-                                        : getProductToWishList(product._id)
-                                }
+                                onClick={() => handleWishlistAction(product._id)}
                                 className={`cursor-pointer p-1 sm:p-2 rounded-full border transition-colors duration-300 
              ${WishProduct.some(p => p._id === product._id)
                                         ? "bg-red-100 border-red-400 text-red-500"
@@ -156,7 +184,9 @@ export default function ProductDetails() {
                                 <i className="fa-solid fa-heart text-sm sm:text-lg"></i>
                             </button>
 
+
                         </div>
+
 
                         {/* Delivery Info */}
                         <div className='mt-6 md:mt-10 border border-gray-400 rounded-md w-full lg:w-[400px]'>

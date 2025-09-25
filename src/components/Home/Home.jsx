@@ -10,7 +10,9 @@ import { WishContext } from '../../Context/WishListContext';
 import axios from 'axios';
 import Loading from '../Loading/Loading';
 
+
 export default function Home() {
+
 
     let { products, loading } = useContext(productContext);
     let { getProductToCart, cart } = useContext(cartContext);
@@ -18,11 +20,14 @@ export default function Home() {
     const [category, setCategory] = useState([]);
     const [Looading, setLoading] = useState(true);
 
+
     const navigate = useNavigate();
     const [addedItems, setAddedItems] = useState([]);
 
+
     const handleAddToCart = (productId) => {
         let token = localStorage.getItem('userToken');
+
 
         if (!token) {
             toast.error("You must sign in first to add to cart");
@@ -33,10 +38,30 @@ export default function Home() {
         setAddedItems((prev) => [...prev, productId]); // mark as added
     }
 
+    // Add this new function for wishlist authentication check
+    const handleWishlistAction = (productId) => {
+        let token = localStorage.getItem('userToken');
+
+        if (!token) {
+            toast.error("You must sign in first to add to wishlist");
+            navigate("/login");
+            return;
+        }
+
+        // If authenticated, proceed with wishlist action
+        if (WishProduct.some(p => p._id === productId)) {
+            deleteWishList(productId);
+        } else {
+            getProductToWishList(productId);
+        }
+    }
+
+
     useEffect(() => {
         document.title = 'Home';
         getCategory();
     }, []);
+
 
     async function getCategory() {
         try {
@@ -51,6 +76,7 @@ export default function Home() {
     }
 
 
+
     return (
         <>
             <header className='flex flex-col lg:flex-row justify-center gap-6 lg:gap-0 px-5 lg:px-30 py-6 relative'>
@@ -58,7 +84,9 @@ export default function Home() {
                     <HomeCategory />
                 </div>
 
+
                 <div className='hidden lg:block bg-gray-300 h-85 w-0.5 me-15 absolute top-0 left-1/4'></div>
+
 
                 <div className='w-full lg:w-9/12'>
                     <HomeSlider />
@@ -74,6 +102,7 @@ export default function Home() {
                     </div>
                     <h1 className='text-2xl sm:text-3xl lg:text-4xl font-semibold mt-5 sm:mt-7 mb-6 sm:mb-10'>Explore Our Products</h1>
                 </div>
+
 
                 {/* Products */}
                 {loading ? (
@@ -95,6 +124,7 @@ export default function Home() {
                                                 />
                                             </div>
 
+
                                             {/* Product Info */}
                                             <div className="mt-3 sm:mt-4 space-y-1">
                                                 <span className="inline-block text-xs font-medium text-gray-400 uppercase tracking-widest">
@@ -103,6 +133,7 @@ export default function Home() {
                                                 <h3 className="text-sm sm:text-base font-semibold text-gray-800 leading-snug line-clamp-2">
                                                     {product.title.split(' ', 2).join(' ')}
                                                 </h3>
+
 
                                                 <div className="flex justify-between items-center mt-2">
                                                     <span className="text-green-600 font-bold text-xs sm:text-sm">{product.price} EGP</span>
@@ -113,6 +144,7 @@ export default function Home() {
                                                 </div>
                                             </div>
                                         </Link>
+
 
                                         {/* Action Buttons */}
                                         <div className="mt-3 sm:mt-5 flex justify-between items-center gap-2 sm:gap-3">
@@ -125,28 +157,27 @@ export default function Home() {
                                                 {addedItems.includes(product._id) ? "Added" : "Add to Cart"}
                                             </button>
 
+
+                                            {/* Updated wishlist button with authentication check */}
                                             <button
-                                                onClick={() =>
-                                                    WishProduct.some(p => p._id === product._id)
-                                                        ? deleteWishList(product._id)
-                                                        : getProductToWishList(product._id)
-                                                }
-                                                className={`cursor-pointer p-1 sm:p-2 rounded-full border transition-colors duration-300 
-                ${WishProduct.some(p => p._id === product._id)
-                                                        ? "bg-red-100 border-red-400 text-red-500"
-                                                        : "border-gray-300 text-gray-500 hover:text-red-500 hover:border-red-400"
+                                                onClick={() => handleWishlistAction(product._id)}
+                                                className={`cursor-pointer p-1 sm:p-2 rounded-full border transition-all duration-300 hover:scale-110 focus:outline-none focus:ring-2 focus:ring-offset-1 ${WishProduct.some(p => p._id === product._id)
+                                                    ? "bg-red-100 border-red-400 text-red-500 focus:ring-red-300"
+                                                    : "border-gray-300 text-gray-500 hover:text-red-500 hover:border-red-400 focus:ring-red-300"
                                                     }`}
+                                                title={WishProduct.some(p => p._id === product._id) ? "Remove from wishlist" : "Add to wishlist"}
                                             >
-                                                <i className="fa-solid fa-heart text-sm sm:text-lg"></i>
+                                                <i className={`fa-solid fa-heart text-sm sm:text-lg transition-all duration-300 ${WishProduct.some(p => p._id === product._id)
+                                                        ? "animate-pulse"
+                                                        : "hover:scale-110"
+                                                    }`}></i>
                                             </button>
-
-
-
                                         </div>
                                     </div>
                                 </div>
                             ))}
                         </div>
+
 
                         <div className='flex justify-center mt-8 lg:mt-10'>
                             <Link to={'/products'}
@@ -158,6 +189,7 @@ export default function Home() {
                     </>
                 )}
             </section>
+
 
             {/* category section */}
             {Looading ? <Loading /> : <>
@@ -172,6 +204,7 @@ export default function Home() {
                         <p className='text-gray-600 text-base lg:text-lg'>Discover our carefully curated product collections</p>
                     </div>
 
+
                     {/* main section */}
                     <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8'>
                         {category?.slice(0, 6).map((categories) => (
@@ -181,6 +214,7 @@ export default function Home() {
                             >
                                 {/* Background gradient overlay */}
                                 <div className='absolute inset-0 bg-gradient-to-br from-transparent via-transparent to-[#DB4444]/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500'></div>
+
 
                                 {/* Content container */}
                                 <div className='relative p-6 lg:p-8 flex flex-col items-center text-center'>
@@ -195,10 +229,12 @@ export default function Home() {
                                         <div className='absolute -top-2 -right-2 w-8 h-8 bg-[#DB4444]/10 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300'></div>
                                     </div>
 
+
                                     {/* Category name */}
                                     <h3 className='font-semibold text-lg lg:text-xl text-gray-800 group-hover:text-[#DB4444] transition-colors duration-300'>
                                         {categories.name}
                                     </h3>
+
 
                                     {/* Subtle description */}
                                     <p className='text-sm text-gray-500 mt-2 opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-y-2 group-hover:translate-y-0'>
@@ -206,11 +242,13 @@ export default function Home() {
                                     </p>
                                 </div>
 
+
                                 {/* Bottom border accent */}
                                 <div className='absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-[#DB4444] to-[#FF6B6B] transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left'></div>
                             </div>
                         ))}
                     </div>
+
 
 
                     <div className='flex justify-center mt-8 lg:mt-10'>
@@ -223,11 +261,14 @@ export default function Home() {
                 </section>
             </>}
 
+
+            {/* Rest of your feedbacks section remains the same... */}
             {/* feedbacks */}
             <section className='py-20 px-5 lg:px-30 bg-gradient-to-br from-gray-50 via-white to-gray-50 relative overflow-hidden'>
                 {/* Background decorative elements */}
                 <div className='absolute top-10 left-10 w-20 h-20 bg-[#DB4444]/5 rounded-full blur-xl'></div>
                 <div className='absolute bottom-10 right-10 w-32 h-32 bg-[#DB4444]/3 rounded-full blur-2xl'></div>
+
 
                 {/* Section header */}
                 <div className='text-center mb-16'>
@@ -239,6 +280,7 @@ export default function Home() {
                     <p className='text-gray-600 text-base lg:text-lg max-w-2xl mx-auto'>We're committed to providing exceptional service and support at every step of your journey</p>
                 </div>
 
+
                 {/* Features grid */}
                 <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 lg:gap-12 max-w-7xl mx-auto'>
                     {/* First card - Free Delivery */}
@@ -247,6 +289,7 @@ export default function Home() {
                         <div className='bg-white rounded-2xl p-8 shadow-sm hover:shadow-xl transition-all duration-500 hover:-translate-y-3 border border-gray-100 relative overflow-hidden'>
                             {/* Hover gradient overlay */}
                             <div className='absolute inset-0 bg-gradient-to-br from-[#DB4444]/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500'></div>
+
 
                             {/* Icon container */}
                             <div className='relative mb-6 flex justify-center'>
@@ -265,6 +308,7 @@ export default function Home() {
                                 <div className='absolute -top-2 -right-2 w-6 h-6 bg-[#DB4444] rounded-full opacity-0 group-hover:opacity-100 transition-all duration-300 animate-pulse'></div>
                             </div>
 
+
                             {/* Content */}
                             <div className='relative text-center'>
                                 <h3 className='font-semibold text-xl text-gray-800 mb-3 group-hover:text-[#DB4444] transition-colors duration-300'>
@@ -275,15 +319,18 @@ export default function Home() {
                                 </p>
                             </div>
 
+
                             {/* Bottom accent line */}
                             <div className='absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-[#DB4444] to-[#FF6B6B] transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-center'></div>
                         </div>
                     </div>
 
+
                     {/* Second card - Customer Service */}
                     <div className='group relative'>
                         <div className='bg-white rounded-2xl p-8 shadow-sm hover:shadow-xl transition-all duration-500 hover:-translate-y-3 border border-gray-100 relative overflow-hidden'>
                             <div className='absolute inset-0 bg-gradient-to-br from-[#DB4444]/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500'></div>
+
 
                             <div className='relative mb-6 flex justify-center'>
                                 <div className='w-20 h-20 bg-gradient-to-br from-gray-800 to-gray-900 rounded-full flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300'>
@@ -300,6 +347,7 @@ export default function Home() {
                                 <div className='absolute -top-2 -right-2 w-6 h-6 bg-[#DB4444] rounded-full opacity-0 group-hover:opacity-100 transition-all duration-300 animate-pulse'></div>
                             </div>
 
+
                             <div className='relative text-center'>
                                 <h3 className='font-semibold text-xl text-gray-800 mb-3 group-hover:text-[#DB4444] transition-colors duration-300'>
                                     24/7 CUSTOMER SERVICE
@@ -309,14 +357,17 @@ export default function Home() {
                                 </p>
                             </div>
 
+
                             <div className='absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-[#DB4444] to-[#FF6B6B] transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-center'></div>
                         </div>
                     </div>
+
 
                     {/* Third card - Money Back Guarantee */}
                     <div className='group relative md:col-span-2 lg:col-span-1 md:mx-auto lg:mx-0 md:max-w-sm lg:max-w-none'>
                         <div className='bg-white rounded-2xl p-8 shadow-sm hover:shadow-xl transition-all duration-500 hover:-translate-y-3 border border-gray-100 relative overflow-hidden'>
                             <div className='absolute inset-0 bg-gradient-to-br from-[#DB4444]/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500'></div>
+
 
                             <div className='relative mb-6 flex justify-center'>
                                 <div className='w-20 h-20 bg-gradient-to-br from-gray-800 to-gray-900 rounded-full flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300'>
@@ -330,6 +381,7 @@ export default function Home() {
                                 <div className='absolute -top-2 -right-2 w-6 h-6 bg-[#DB4444] rounded-full opacity-0 group-hover:opacity-100 transition-all duration-300 animate-pulse'></div>
                             </div>
 
+
                             <div className='relative text-center'>
                                 <h3 className='font-semibold text-xl text-gray-800 mb-3 group-hover:text-[#DB4444] transition-colors duration-300'>
                                     MONEY BACK GUARANTEE
@@ -339,10 +391,12 @@ export default function Home() {
                                 </p>
                             </div>
 
+
                             <div className='absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-[#DB4444] to-[#FF6B6B] transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-center'></div>
                         </div>
                     </div>
                 </div>
+
 
                 {/* Optional: Additional trust indicators */}
                 <div className='mt-16 text-center'>
@@ -364,6 +418,7 @@ export default function Home() {
                     </div>
                 </div>
             </section>
+
 
 
         </>

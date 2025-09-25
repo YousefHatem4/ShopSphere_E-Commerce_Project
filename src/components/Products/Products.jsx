@@ -7,6 +7,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import Loading from '../Loading/Loading';
 
+
 export default function Products() {
     let { products, loading } = useContext(productContext);
     let { getProductToCart, cart } = useContext(cartContext);
@@ -14,8 +15,10 @@ export default function Products() {
     const navigate = useNavigate();
     const [addedItems, setAddedItems] = useState([]);
 
+
     const handleAddToCart = (productId) => {
         let token = localStorage.getItem('userToken');
+
 
         if (!token) {
             toast.error("You must sign in first to add to cart");
@@ -26,10 +29,30 @@ export default function Products() {
         setAddedItems((prev) => [...prev, productId]); // mark as added
     }
 
+    // Add this new function for wishlist authentication check
+    const handleWishlistAction = (productId) => {
+        let token = localStorage.getItem('userToken');
+
+        if (!token) {
+            toast.error("You must sign in first to add to wishlist");
+            navigate("/login");
+            return;
+        }
+
+        // If authenticated, proceed with wishlist action
+        if (WishProduct.some(p => p._id === productId)) {
+            deleteWishList(productId);
+        } else {
+            getProductToWishList(productId);
+        }
+    }
+
+
     useEffect(() => {
         document.title = 'Products';
         window.scrollTo(0, 0);
     }, []);
+
 
     return <>
         {/* Products section */}
@@ -41,6 +64,7 @@ export default function Products() {
                     <h1 className='text-[#DB4444] font-bold text-sm sm:text-base'>Our Products</h1>
                 </div>
             </div>
+
 
             {/* Products */}
             {loading ? (
@@ -62,6 +86,7 @@ export default function Products() {
                                             />
                                         </div>
 
+
                                         {/* Product Info */}
                                         <div className="mt-3 sm:mt-4 space-y-1">
                                             <span className="inline-block text-xs font-medium text-gray-400 uppercase tracking-widest">
@@ -70,6 +95,7 @@ export default function Products() {
                                             <h3 className="text-sm sm:text-base font-semibold text-gray-800 leading-snug line-clamp-2">
                                                 {product.title.split(' ', 2).join(' ')}
                                             </h3>
+
 
                                             <div className="flex justify-between items-center mt-2">
                                                 <span className="text-green-600 font-bold text-xs sm:text-sm">{product.price} EGP</span>
@@ -80,6 +106,7 @@ export default function Products() {
                                             </div>
                                         </div>
                                     </Link>
+
 
                                     {/* Action Buttons */}
                                     <div className="mt-3 sm:mt-5 flex justify-between items-center gap-2 sm:gap-3">
@@ -92,30 +119,26 @@ export default function Products() {
                                             {addedItems.includes(product._id) ? "Added" : "Add to Cart"}
                                         </button>
 
+
+                                        {/* Updated wishlist button with authentication check */}
                                         <button
-                                            onClick={() =>
-                                                WishProduct.some(p => p._id === product._id)
-                                                    ? deleteWishList(product._id)
-                                                    : getProductToWishList(product._id)
-                                            }
-                                            className={`cursor-pointer p-1 sm:p-2 rounded-full border transition-colors duration-300 
-             ${WishProduct.some(p => p._id === product._id)
-                                                    ? "bg-red-100 border-red-400 text-red-500"
-                                                    : "border-gray-300 text-gray-500 hover:text-red-500 hover:border-red-400"
+                                            onClick={() => handleWishlistAction(product._id)}
+                                            className={`cursor-pointer p-1 sm:p-2 rounded-full border transition-all duration-300 hover:scale-110 focus:outline-none focus:ring-2 focus:ring-offset-1 ${WishProduct.some(p => p._id === product._id)
+                                                ? "bg-red-100 border-red-400 text-red-500 focus:ring-red-300"
+                                                : "border-gray-300 text-gray-500 hover:text-red-500 hover:border-red-400 focus:ring-red-300"
                                                 }`}
+                                            title={WishProduct.some(p => p._id === product._id) ? "Remove from wishlist" : "Add to wishlist"}
                                         >
-                                            <i className="fa-solid fa-heart text-sm sm:text-lg"></i>
+                                            <i className={`fa-solid fa-heart text-sm sm:text-lg transition-all duration-300 ${WishProduct.some(p => p._id === product._id)
+                                                    ? "animate-pulse"
+                                                    : "hover:scale-110"
+                                                }`}></i>
                                         </button>
-
-
-
                                     </div>
                                 </div>
                             </div>
                         ))}
                     </div>
-
-                   
                 </>
             )}
         </section>

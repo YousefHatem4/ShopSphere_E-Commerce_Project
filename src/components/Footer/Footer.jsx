@@ -52,11 +52,11 @@ export default function Footer() {
                     <div>
                         <h3 className="text-lg font-bold text-white mb-6">Account</h3>
                         <ul className="space-y-3 text-gray-400">
-                            <li><Link to="/account" className="hover:text-white transition-colors">My Account</Link></li>
-                            <li><Link to="/login" className="hover:text-white transition-colors">Login / Register</Link></li>
-                            <li><Link to="/cart" className="hover:text-white transition-colors">Cart</Link></li>
-                            <li><Link to="/wishlist" className="hover:text-white transition-colors">Wishlist</Link></li>
-                            <li><Link to="/shop" className="hover:text-white transition-colors">Shop</Link></li>
+                            <li><Link to="" className="hover:text-white transition-colors">My Account</Link></li>
+                            <li><Link to="" className="hover:text-white transition-colors">Login / Register</Link></li>
+                            <li><Link to="" className="hover:text-white transition-colors">Cart</Link></li>
+                            <li><Link to="" className="hover:text-white transition-colors">Wishlist</Link></li>
+                            <li><Link to="" className="hover:text-white transition-colors">Shop</Link></li>
                         </ul>
                     </div>
 
@@ -64,10 +64,10 @@ export default function Footer() {
                     <div>
                         <h3 className="text-lg font-bold text-white mb-6">Quick Link</h3>
                         <ul className="space-y-3 text-gray-400">
-                            <li><Link to="/privacy" className="hover:text-white transition-colors">Privacy Policy</Link></li>
-                            <li><Link to="/terms" className="hover:text-white transition-colors">Terms Of Use</Link></li>
-                            <li><Link to="/faq" className="hover:text-white transition-colors">FAQ</Link></li>
-                            <li><Link to="/contact" className="hover:text-white transition-colors">Contact</Link></li>
+                            <li><Link to="" className="hover:text-white transition-colors">Privacy Policy</Link></li>
+                            <li><Link to="" className="hover:text-white transition-colors">Terms Of Use</Link></li>
+                            <li><Link to="" className="hover:text-white transition-colors">FAQ</Link></li>
+                            <li><Link to="" className="hover:text-white transition-colors">Contact</Link></li>
                         </ul>
                     </div>
                 </div>
